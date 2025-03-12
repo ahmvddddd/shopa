@@ -1,6 +1,6 @@
 # shopa
 
-A new Flutter project.
+Shopa is a full stack mobile ecommerce application. Built with flutter and nodejs. It has a clean and simple UI with quick functionalities to make your shopping experience memorable
 
 ## Getting Started
 
