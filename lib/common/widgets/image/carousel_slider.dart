@@ -15,9 +15,9 @@ class SwitchScreenState extends State<SwitchScreen> {
 
   // List of asset image paths (screens)
   final List<String> screenImages = [
-    Images.funiture,
-    Images.funiture,
-    Images.funiture,
+                      Images.promoBanner2,
+                      Images.funiture,
+                      Images.fashionDesigner,
   ];
 
   @override

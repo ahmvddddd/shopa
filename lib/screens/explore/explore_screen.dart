@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:shopa/common/widgets/image/promo_slider.dart' show PromoSlider;
 import 'package:shopa/screens/cart/cart_screen.dart';
 import 'package:shopa/utils/constants/sizes.dart';
 import '../../common/widgets/appbar/appbar.dart';
+import '../../common/widgets/image/image_slider.dart';
 import '../../common/widgets/texts/section_heading.dart';
-import '../../utils/constants/image_strings.dart';
-import '../favorite/favorite_screen.dart';
-import 'widgets/deals.dart';
-import 'widgets/product_view.dart';
+import '../../utils/helpers/helper_function.dart';
+import '../sub_categories/deals_products.dart';
+import '../sub_categories/men_products.dart';
 
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final dark = THelperFunctions.isDarkMode(context);
     return  SafeArea(
       child: Scaffold(
         appBar: TAppBar(
@@ -25,17 +24,8 @@ class ExploreScreen extends StatelessWidget {
               Navigator.push(context, 
               MaterialPageRoute(builder: (context) => const CartScreen()));
             }, 
-                    icon: Icon(Iconsax.bag,
-                    color: Colors.white,
-                    size: Sizes.iconMd,)),
-
-          const SizedBox(width: Sizes.xs,),
-            IconButton(onPressed: () {
-              Navigator.push(context, 
-              MaterialPageRoute(builder: (context) => const FavoriteScreen()));
-            }, 
-                    icon: Icon(Iconsax.heart,
-                    color: Colors.white,
+                    icon: Icon(Icons.shopping_cart,
+                    color: dark ? Colors.white : Colors.black,
                     size: Sizes.iconMd,)),
           ],
         ),
@@ -44,17 +34,10 @@ class ExploreScreen extends StatelessWidget {
             padding: const EdgeInsets.all(Sizes.spaceBtwItems),
             child: Column(
               children: [
-                const PromoSlider(
-                    imageList: [
-                      Images.promoBanner2,
-                      Images.funiture,
-                      Images.fashionDesigner,
-                    ],
-                  ),
+                 ImageSlider(),
 
-                  const SizedBox(height: Sizes.spaceBtwSections,),
-                  const ProductView(),
-
+                 const SizedBox(height: Sizes.spaceBtwSections,),
+                 const MenProductsPage(),
                   const SizedBox(
                 height: Sizes.spaceBtwItems,
               ),
@@ -63,7 +46,7 @@ class ExploreScreen extends StatelessWidget {
                 showActionButton: true,
               ),
               const SizedBox(height: Sizes.sm,),
-              const Deals(),
+              const DealsProducts(),
               
               ],
             ),

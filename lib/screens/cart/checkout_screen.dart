@@ -7,7 +7,7 @@ import '../../common/widgets/texts/section_heading.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/sizes.dart';
 import '../../utils/helpers/helper_function.dart';
-import '../payment/payment_screen.dart';
+// import '../payment/payment_screen.dart';
 
 class CheckoutScreen extends StatelessWidget {
   const CheckoutScreen({super.key});
@@ -26,10 +26,10 @@ class CheckoutScreen extends StatelessWidget {
         ),
         bottomNavigationBar: ButtonContainer(
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const PaymentScreen()),
-            );
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(builder: (context) => const PaymentScreen()),
+            // );
           },
           text: 'Checkout',
         ),
@@ -54,7 +54,7 @@ class CheckoutScreen extends StatelessWidget {
                         children: [
                           Icon(Icons.location_on, color: Colors.red[900]),
                           Text(
-                            '234, White Hat Lane THSP. KU',
+                            '234, White Heart Lane THSP. KU',
                             style: Theme.of(context).textTheme.labelSmall,
                           ),
                         ],
@@ -111,8 +111,8 @@ class CheckoutScreen extends StatelessWidget {
                             style: Theme.of(context).textTheme.labelSmall,
                           ),
                           Text(
-                            '\u20A6152,799:',
-                            style: Theme.of(context).textTheme.labelMedium,
+                            '\u20A6152,799',
+                            style: Theme.of(context).textTheme.labelMedium!.copyWith(fontFamily: "JosefinSans",),
                           ),
                         ],
                       ),
@@ -141,9 +141,9 @@ class CheckoutScreen extends StatelessWidget {
                             style: Theme.of(context).textTheme.labelSmall,
                           ),
                           Text(
-                            '\u20A6152,799:',
+                            '\u20A6152,799',
                             style: Theme.of(context).textTheme.labelMedium!
-                                .copyWith(color: TColors.success),
+                                .copyWith(fontFamily: "JosefinSans", color: TColors.success),
                           ),
                         ],
                       ),

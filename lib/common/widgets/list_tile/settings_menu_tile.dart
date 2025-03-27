@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/sizes.dart';
 
-class TSettingsMenuTile extends StatelessWidget {
-  const TSettingsMenuTile({
+class SettingsMenuTile extends StatelessWidget {
+  const SettingsMenuTile({
     super.key,
     required this.icon,
     required this.title,
@@ -23,7 +23,7 @@ class TSettingsMenuTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: Icon(icon, size: Sizes.iconSm, color: TColors.primary),
-      title: Text(title, style:  Theme.of(context).textTheme.bodyMedium,),
+      title: Text(title, style:  Theme.of(context).textTheme.bodyMedium!.copyWith(overflow: TextOverflow.ellipsis),),
       subtitle: Text(subTitle, style: Theme.of(context).textTheme.labelMedium),
       trailing: trailing,
       onTap: onTap,

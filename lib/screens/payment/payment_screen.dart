@@ -1,19 +1,25 @@
 // ignore_for_file: library_private_types_in_public_api, avoid_print
 
 import 'package:flutter/material.dart';
-// import 'package:http/http.dart' as http;
-// import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-// import 'package:url_launcher/url_launcher.dart';
 import 'package:iconsax/iconsax.dart';
-// import 'package:intl/intl.dart';
 import '../../common/widgets/appbar/appbar.dart';
 import '../../common/widgets/custom_shapes/containers/button_container.dart';
 import '../../utils/constants/sizes.dart';
 import '../../utils/helpers/helper_function.dart';
+import '../../controllers/auth/userId_controller.dart';
 
 class PaymentScreen extends StatefulWidget {
-  const PaymentScreen({super.key});
+  final List<dynamic> products;
+  final double totalAmount;
+  const PaymentScreen({
+    super.key,
+    required this.products,
+    required this.totalAmount,
+  });
 
   @override
   _PaymentScreenState createState() => _PaymentScreenState();
@@ -27,117 +33,86 @@ class _PaymentScreenState extends State<PaymentScreen> {
   final _expiryYearController = TextEditingController();
   final _amountController = TextEditingController();
   final storage = const FlutterSecureStorage();
-  // bool _isLoading = false;
-  // String? _responseMessage;
+  String currentUserId = '';
+  final UserIdService userIdService = UserIdService();
+  final String placeOrderUrl = dotenv.env['PLACE_ORDER'] ?? 'https://defaulturl.com/api';
+
 
   @override
   void initState() {
     super.initState();
-    // _fetchWallet();
   }
 
-  // Future<void> _fetchWallet() async {
-  //   final token = await storage.read(key: 'token'); // Assuming the token is stored with this key
+  Future<void> placeOrder() async {
+    try {
+      await getCurrentUserId();
+      final response = await http.post(
+        Uri.parse(placeOrderUrl),
+        body: json.encode({
+          "userId": currentUserId,
+          "products": widget.products,
+          "totalAmount": widget.totalAmount,
+          "deliveryStatus": "success",
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      );
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Your order would arrive soon. Thank you',
+            ),
+          ),
+        );
+        clearCart();
+      } else {
+        print(response.body);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Unable to place order, try again')),
+      );
+    }
+  }
 
-  //   if (token != null) {
-  //     final response = await http.get(
-  //       Uri.parse('http://localhost:3000/api/wallet'), // Replace with your actual API URL
-  //       headers: {
-  //         'Authorization': 'Bearer $token',
-  //       },
-  //     );
+  Future<void> clearCart() async {
+    try {
+      await getCurrentUserId();
+      final response = await http.post(
+        Uri.parse('http://localhost:3000/api/clear'),
+        body: json.encode({
+          "userId": currentUserId,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      );
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Your cart was cleared',
+            ),
+          ),
+        );
+      } else {
+        print(response.body);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Unable to clear cart, try again')),
+      );
+    }
+  }
 
-  //     if (response.statusCode == 200) {
-  //       final data = json.decode(response.body);
-  //       setState(() {
-  //         _balance = data['balance'];
-
-  //       });
-  //     } else {
-  //       // Handle error response
-  //       print('Failed to fetch balance: ${response.body}');
-  //     }
-  //   } else {
-  //     print('Token not found');
-  //   }
-  // }
-
-  // Future<void> _makeDeposit() async {
-  //   setState(() {
-  //     _isLoading = true;
-  //     _responseMessage = null;
-  //   });
-
-  //   // Fetch JWT token from secure storage
-  //   final token = await storage.read(key: 'token');
-
-  //   if (token == null) {
-  //     setState(() {
-  //       _isLoading = false;
-  //       _responseMessage = 'User not authenticated';
-  //     });
-  //     return;
-  //   }
-
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse(
-  //           'http://localhost:3000/api/deposit'), // Replace with your actual API URL
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': 'Bearer $token',
-  //       },
-  //       body: jsonEncode({
-  //         'card_number': _cardNumberController.text,
-  //         'cvv': _cvvController.text,
-  //         'expiry_month': _expiryMonthController.text,
-  //         'expiry_year': _expiryYearController.text,
-  //         'amount': _amountController.text,
-  //       }),
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       final data = jsonDecode(response.body);
-
-  //       // Check if the response contains a redirect URL
-  //       if (data['redirectUrl'] != null) {
-  //         final redirectUrl = data['redirectUrl'];
-
-  //         // Open the redirect URL in the same or a new browser tab (Flutter web)
-  //         if (await canLaunchUrl(redirectUrl)) {
-  //           await launchUrl(
-  //             redirectUrl,
-  //             webOnlyWindowName: '_self', // Opens in a new tab
-  //           );
-  //           setState(() {
-  //             _responseMessage = 'Redirecting for payment...';
-  //           });
-  //         } else {
-  //           setState(() {
-  //             _responseMessage = 'Could not launch redirect URL';
-  //           });
-  //         }
-  //       } else {
-  //         setState(() {
-  //           _responseMessage = 'Deposit Successful: $data';
-  //         });
-  //       }
-  //     } else {
-  //       final error = jsonDecode(response.body);
-  //       setState(() {
-  //         _responseMessage = 'Deposit Failed: ${error['message']}';
-  //       });
-  //     }
-  //   } catch (e) {
-  //     setState(() {
-  //       _responseMessage = 'Error: ${e.toString()}';
-  //     });
-  //   } finally {
-  //     setState(() {
-  //       _isLoading = false;
-  //     });
-  //   }
-  // }
+  Future<void> getCurrentUserId() async {
+    final userId = await userIdService.getCurrentUserId();
+    setState(() {
+      currentUserId = userId!;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,70 +120,62 @@ class _PaymentScreenState extends State<PaymentScreen> {
     // String accountBalance = NumberFormat('#,##0.00').format(_balance);
     return Scaffold(
       appBar: TAppBar(
-                        title: Text('Pay',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineSmall),
-                        showBackArrow: true,
-                      ),
-                      bottomNavigationBar: ButtonContainer(
-                        onPressed: () {},
-                        text: 'Pay',
-                      ),
+        title: Text('Pay', style: Theme.of(context).textTheme.headlineSmall),
+        showBackArrow: true,
+      ),
+      bottomNavigationBar: ButtonContainer(onPressed: () {
+        placeOrder();
+      }, 
+      text: 'Pay'),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(Sizes.spaceBtwItems),
           child: Column(
             children: [
-              
-              const SizedBox(height: Sizes.spaceBtwSections,),
+              const SizedBox(height: Sizes.spaceBtwSections),
               //card number
               Container(
                 height: 40,
                 decoration: BoxDecoration(
-                    border: Border.all(color: dark ? Colors.white : Colors.black),
-                    borderRadius: BorderRadius.circular(12)),
+                  border: Border.all(color: dark ? Colors.white : Colors.black),
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.only(left: 0.0),
                   child: TextField(
                     controller: _cardNumberController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(
-                        Iconsax.card,
-                        size: Sizes.iconSm,
-                      ),
+                      prefixIcon: const Icon(Iconsax.card, size: Sizes.iconSm),
                       hintText: 'Card Number',
                       hintStyle: Theme.of(context).textTheme.labelSmall,
                     ),
                   ),
                 ),
               ),
-                
+
               //cvv
               const SizedBox(height: Sizes.spaceBtwItems),
               Container(
                 height: 40,
                 decoration: BoxDecoration(
-                    border: Border.all(color: dark ? Colors.white : Colors.black),
-                    borderRadius: BorderRadius.circular(12)),
+                  border: Border.all(color: dark ? Colors.white : Colors.black),
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.only(left: 0.0),
                   child: TextField(
                     controller: _cvvController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(
-                        Iconsax.card,
-                        size: Sizes.iconSm,
-                      ),
+                      prefixIcon: const Icon(Iconsax.card, size: Sizes.iconSm),
                       hintText: 'CVV',
                       hintStyle: Theme.of(context).textTheme.labelSmall,
                     ),
                   ),
                 ),
               ),
-                
+
               // expiry date
               const SizedBox(height: Sizes.spaceBtwItems),
               Row(
@@ -217,9 +184,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     child: Container(
                       height: 40,
                       decoration: BoxDecoration(
-                          border: Border.all(
-                              color: dark ? Colors.white : Colors.black),
-                          borderRadius: BorderRadius.circular(12)),
+                        border: Border.all(
+                          color: dark ? Colors.white : Colors.black,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.only(left: 0.0),
                         child: TextFormField(
@@ -244,9 +213,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     child: Container(
                       height: 40,
                       decoration: BoxDecoration(
-                        border:
-                            Border.all(color: dark ? Colors.white : Colors.black),
-                        borderRadius: BorderRadius.circular(12)),
+                        border: Border.all(
+                          color: dark ? Colors.white : Colors.black,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.only(left: 0.0),
                         child: TextFormField(
@@ -268,24 +239,22 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   ),
                 ],
               ),
-                
+
               //amount
               const SizedBox(height: Sizes.spaceBtwItems),
               Container(
                 height: 40,
                 decoration: BoxDecoration(
-                    border: Border.all(color: dark ? Colors.white : Colors.black),
-                    borderRadius: BorderRadius.circular(12)),
+                  border: Border.all(color: dark ? Colors.white : Colors.black),
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.only(left: 0.0),
                   child: TextFormField(
                     controller: _amountController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(
-                        Icons.money,
-                        size: Sizes.iconSm,
-                      ),
+                      prefixIcon: const Icon(Icons.money, size: Sizes.iconSm),
                       hintText: 'Amount',
                       hintStyle: Theme.of(context).textTheme.labelSmall,
                     ),
@@ -293,18 +262,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ),
               ),
               const SizedBox(height: Sizes.spaceBtwItems),
-              // SizedBox(
-              //   width: double.infinity,
-              //   child: OutlinedButton(
-              //     onPressed: _isLoading ? null : _makeDeposit,
-              //     child: _isLoading
-              //         ? const CircularProgressIndicator()
-              //         :  Text('Make Deposit',
-              //         style: Theme.of(context).textTheme.bodyMedium),
-              //   ),
-              // ),
-              // const SizedBox(height: 20),
-              // if (_responseMessage != null) Text(_responseMessage!),
             ],
           ),
         ),

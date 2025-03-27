@@ -73,14 +73,11 @@ class _DealsState extends State<Deals> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(
-                      width: screenWidth * 0.18,
-                      child: Text(
-                        dealsList[index]["name"],
-                        style: Theme.of(context).textTheme.labelSmall,
-                        softWrap: true,
-                        maxLines: 2,
-                      ),
+                    Text(
+                      dealsList[index]["name"],
+                      style: Theme.of(context).textTheme.labelSmall,
+                      softWrap: true,
+                      maxLines: 2,
                     ),
                     Text(
                       dealsList[index]["price"],

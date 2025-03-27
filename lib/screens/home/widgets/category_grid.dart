@@ -27,7 +27,7 @@ class _CategoryGridState extends State<CategoryGrid> {
       mainAxisExtent: screenHeight * 0.14,
       itemBuilder: (context, index)  {
         return RoundedContainer(
-          backgroundColor: TColors.primary.withOpacity(0.5),
+          backgroundColor: TColors.primary,
           height: screenHeight * 0.14,
           width: screenWidth * 0.20,
           child: Center(

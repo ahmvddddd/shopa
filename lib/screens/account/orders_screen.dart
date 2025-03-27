@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
+import '../../common/widgets/appbar/appbar.dart';
+import '../../common/widgets/custom_shapes/containers/semi_curved_container.dart';
+import '../../common/widgets/layouts/listvew.dart';
+import '../../utils/constants/colors.dart';
+import '../../utils/constants/image_strings.dart';
+import '../../utils/constants/sizes.dart';
+import '../../utils/helpers/helper_function.dart';
 
-import '../../../common/widgets/custom_shapes/containers/semi_curved_container.dart';
-import '../../../common/widgets/layouts/grid_layout.dart';
-import '../../../utils/constants/colors.dart';
-import '../../../utils/constants/image_strings.dart';
-import '../../../utils/constants/sizes.dart';
-import '../../../utils/helpers/helper_function.dart';
-import '../../product/product_details_screen.dart';
-
-class FavoriteList extends StatefulWidget {
-  const FavoriteList({super.key});
+class OrdersScreen extends StatefulWidget {
+  const OrdersScreen({super.key});
 
   @override
-  State<FavoriteList> createState() => _FavoriteListState();
+  State<OrdersScreen> createState() => _OrdersScreenState();
 }
 
-class _FavoriteListState extends State<FavoriteList> {
-  @override
-  Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> favoriteList = [
+class _OrdersScreenState extends State<OrdersScreen> {
+    final List<Map<String, dynamic>> ordersList = [
     {
       "image": Images.hublot5,
       "name": "Hublot Chronograph Magic",
@@ -55,43 +52,39 @@ class _FavoriteListState extends State<FavoriteList> {
       "price": "\u20a6110,000",
     },
   ];
-
-  
+  @override
+  Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-  
-   return GridLayout(
-      crossAxisCount: 2,
-      itemCount: favoriteList.length,
-      mainAxisExtent: screenHeight * 0.30,
-      itemBuilder: (context, index)  {
-    return GestureDetector(
-          onTap: () {
-            Navigator.push(context, 
-            MaterialPageRoute(builder: (context) => const ProductDetailsScreen()));
-          },
-      child: SemiCurvedContainer(
+    return SafeArea(
+      child: Scaffold(
+      appBar: TAppBar(
+        title: Text('Orders',
+        style: Theme.of(context).textTheme.headlineSmall),
+        showBackArrow: true
+      ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(Sizes.spaceBtwItems),
+            child: Column(
+              children: [
+                HomeListView(
+      scrollDirection: Axis.vertical,
+      scrollPhysics: const NeverScrollableScrollPhysics(),
+      seperatorBuilder: (context, index) => const SizedBox(height: Sizes.sm),
+      itemCount: ordersList.length,
+      itemBuilder: (context, index) {
+        return SemiCurvedContainer(
             backgroundColor: dark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.1),
             width: screenWidth * 0.35,
             child: Padding(
               padding: const EdgeInsets.all(Sizes.sm),
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const SizedBox(width: 10,),
-      
-                      IconButton(onPressed: () {},
-                      icon: Icon(Icons.favorite,
-                      color: Colors.white,
-                      size: Sizes.iconSm,))
-                    ],
-                  ),
               
-                  Image.asset(favoriteList[index]["image"],
-                  height: screenHeight * 0.18,
+                  Image.asset(ordersList[index]["image"],
+                  height: screenHeight * 0.14,
                   width: screenWidth * 0.30,
                   ),
               
@@ -101,21 +94,26 @@ class _FavoriteListState extends State<FavoriteList> {
                     children: [
                       SizedBox(
                         width: screenWidth * 0.18,
-                        child: Text(favoriteList[index]["name"],
+                        child: Text(ordersList[index]["name"],
                         style: Theme.of(context).textTheme.labelSmall,
                         softWrap: true,
                         maxLines: 2,),
                       ),
-                      Text(favoriteList[index]["price"],
+                      Text(ordersList[index]["price"],
                       style: Theme.of(context).textTheme.labelLarge!.copyWith(fontFamily: "JosefinSans", color: TColors.primary),),
                     ],
                   )
                 ],
               ),
             )
+          );
+                  },
+                ),
+              ],
+            ),
           ),
-    );
-     }
+        ),
+      ),
     );
   }
 }

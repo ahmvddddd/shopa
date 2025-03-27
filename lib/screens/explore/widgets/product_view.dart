@@ -7,7 +7,6 @@ import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/image_strings.dart';
 import '../../../utils/constants/sizes.dart';
 import '../../../utils/helpers/helper_function.dart';
-import '../../product/product_details_screen.dart';
 
 class ProductView extends StatefulWidget {
   const ProductView({super.key});
@@ -21,22 +20,22 @@ class _ProductViewState extends State<ProductView> {
     {
       "image": Images.productImage1,
       "name": "Nike AirJordan",
-      "price": "\u20a6123,000"
+      "price": "Out of Stock"
     },
     {
       "image": Images.productImage2,
       "name": "Nike AirMax",
-      "price": "\u20a6110,000"
+      "price": "Out of Stock"
     },
     {
       "image": Images.hublot1,
       "name": "Hublot Geneive",
-      "price": "\u20a6349,000"
+      "price": "Out of Stock"
     },
     {
       "image": Images.hublot2,
       "name": "Hublot Sportsman",
-      "price": "\u20a6403,000"
+      "price": "Out of Stock"
     },
   ];
 
@@ -48,12 +47,11 @@ class _ProductViewState extends State<ProductView> {
     return GridLayout(
       crossAxisCount: 2,
       itemCount: forYouList.length,
-      mainAxisExtent: screenHeight * 0.25,
+      mainAxisExtent: screenHeight * 0.33,
       itemBuilder: (context, index)  {
         return GestureDetector(
           onTap: () {
-            Navigator.push(context, 
-            MaterialPageRoute(builder: (context) => const ProductDetailsScreen()));
+           
           },
           child: SemiCurvedContainer(
             backgroundColor: dark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.1),
@@ -95,7 +93,7 @@ class _ProductViewState extends State<ProductView> {
                         maxLines: 2,),
                       ),
                       Text(forYouList[index]["price"],
-                      style: Theme.of(context).textTheme.labelLarge!.copyWith(fontFamily: "JosefinSans", color: TColors.primary),),
+                      style: Theme.of(context).textTheme.labelLarge!.copyWith(fontFamily: "JosefinSans", color: TColors.error),),
                     ],
                   )
                 ],
