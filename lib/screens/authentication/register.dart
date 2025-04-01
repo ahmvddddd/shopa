@@ -39,7 +39,7 @@ class SignupScreen extends StatelessWidget {
                   width: screenWidth * 0.90,
                   child: Text(
                     'Create an account to shop quality products',
-                    style: Theme.of(context).textTheme.labelMedium!.copyWith(color: TColors.primary),
+                    style: Theme.of(context).textTheme.labelMedium,
                     softWrap: true,
                     textAlign: TextAlign.center,
                   ),

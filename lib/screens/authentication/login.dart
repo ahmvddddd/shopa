@@ -41,7 +41,7 @@ class SigninScreen extends StatelessWidget {
                   width: screenWidth * 0.90,
                   child: Text(
                     'Welcome, signin to your account and shop quality products',
-                    style: Theme.of(context).textTheme.labelMedium!.copyWith(color: TColors.primary),
+                    style: Theme.of(context).textTheme.labelMedium,
                     softWrap: true,
                     maxLines: 2,
                     textAlign: TextAlign.center,

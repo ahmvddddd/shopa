@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:typed_data';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -10,20 +10,19 @@ import '../../../common/widgets/layouts/listvew.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/sizes.dart';
 import '../../../utils/helpers/helper_function.dart';
+import '../../controllers/sub_categories/sub_category_controller.dart';
 import '../explore/widgets/deals.dart';
 import '../../controllers/auth/userId_controller.dart';
 import '../product/widgets/products_details_screen.dart';
 
-class DealsProducts extends StatefulWidget {
+class DealsProducts extends ConsumerStatefulWidget {
   const DealsProducts({super.key});
 
   @override
-  State<DealsProducts> createState() => _DealsProductsState();
+  ConsumerState<DealsProducts> createState() => _DealsProductsState();
 }
 
-class _DealsProductsState extends State<DealsProducts> {
-  List<dynamic> dealsList= [];
-  bool isLoading = true;
+class _DealsProductsState extends ConsumerState<DealsProducts> {
   String currentUserId = '';
   final UserIdService userIdService = UserIdService();
   final String productsTagUrl = dotenv.env['PRODUCTS_TAG_URL'] ?? 'https://defaulturl.com/api';
@@ -38,32 +37,9 @@ class _DealsProductsState extends State<DealsProducts> {
   @override
   void initState() {
     super.initState();
-    fetchProducts();
     getCurrentUserId();
   }
 
-  Future<void> fetchProducts() async {
-    try {
-      String tag = 'deal';
-      final response = await http.get(
-        Uri.parse('$productsTagUrl$tag'),
-      );
-      if (response.statusCode == 200) {
-        setState(() {
-          dealsList = json.decode(response.body);
-          isLoading = false;
-        });
-      } else {
-        ScaffoldMessenger(
-          child: SnackBar(content: Text('Could not load products. Try again')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger(
-        child: SnackBar(content: Text('Could not load products. Try again')),
-      );
-    }
-  }
 
   Future<void> getCurrentUserId() async {
     final userId = await userIdService.getCurrentUserId();
@@ -77,18 +53,20 @@ class _DealsProductsState extends State<DealsProducts> {
     final dark = THelperFunctions.isDarkMode(context);
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    return isLoading
+    final dealsList = ref.watch(fetchProductProvider);
+    return 
+    dealsList.isLoading
     ? const Center(child: CircularProgressIndicator())
-            : dealsList.isEmpty
+            : dealsList.products.isEmpty
             ? Deals()
             : HomeListView(
       sizedBoxHeight: screenHeight * 0.23,
       scrollDirection: Axis.horizontal,
       seperatorBuilder: (context, index) => const SizedBox(width: Sizes.sm),
-      itemCount: dealsList.length,
+      itemCount: dealsList.products.length,
       itemBuilder:
           (context, index) {
-            final product = dealsList[index];
+            final product = dealsList.products[index];
                 final productName = product['productName'];
                 final productPrice = product['productPrice'];
                 Uint8List? imageBytes = decodeBase64Image(

@@ -3,25 +3,25 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../common/widgets/appbar/appbar.dart';
 import 'package:intl/intl.dart';
 import '../../../common/widgets/custom_shapes/containers/button_container.dart';
-import '../../../nav_menu.dart';
+import '../../../controllers/products/delete_product_controller.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/sizes.dart';
 import '../../../utils/helpers/helper_function.dart';
 import '../../account/update_product_screen.dart';
 
-class ImageView extends StatefulWidget {
+class ImageView extends ConsumerStatefulWidget {
   final Map<String, dynamic> product;
   const ImageView({super.key, required this.product});
 
   @override
-  State<ImageView> createState() => ImageViewState();
+  ConsumerState<ImageView> createState() => ImageViewState();
 }
 
-class ImageViewState extends State<ImageView> {
+class ImageViewState extends ConsumerState<ImageView> {
   String selectedImage = '';
 
   @override
@@ -37,28 +37,6 @@ class ImageViewState extends State<ImageView> {
     }
   }
 
-  Future<void> deleteProduct(String productId) async {
-    final response = await http.delete(
-      Uri.parse('http://localhost:3000/api/delete/$productId'),
-    );
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Product deleted successfully')));
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder:
-                  (context) =>
-                      NavigationMenu()
-            ),
-          );
-    } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(response.body)));
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +62,7 @@ class ImageViewState extends State<ImageView> {
           );
         },
         onPressed2: () {
-            deleteProduct(widget.product['_id']);
+          ref.read(deleteProductProvider).deleteProduct(context, widget.product['_id']);
         },
         backgroundColor: TColors.warning,
         backgroundColor2: TColors.error,

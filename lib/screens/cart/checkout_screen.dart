@@ -7,7 +7,6 @@ import '../../common/widgets/texts/section_heading.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/sizes.dart';
 import '../../utils/helpers/helper_function.dart';
-// import '../payment/payment_screen.dart';
 
 class CheckoutScreen extends StatelessWidget {
   const CheckoutScreen({super.key});
@@ -25,12 +24,7 @@ class CheckoutScreen extends StatelessWidget {
           showBackArrow: true,
         ),
         bottomNavigationBar: ButtonContainer(
-          onPressed: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(builder: (context) => const PaymentScreen()),
-            // );
-          },
+          onPressed: () {},
           text: 'Checkout',
         ),
         body: SingleChildScrollView(
