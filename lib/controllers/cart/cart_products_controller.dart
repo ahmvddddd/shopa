@@ -4,8 +4,6 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../models/cart/cart_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../auth/userId_controller.dart';
-
 
 
 final cartProductsProvider = StateNotifierProvider<FetchProductController, CartModel>((ref) {
@@ -23,18 +21,17 @@ class FetchProductController extends StateNotifier<CartModel> {
 
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
-  Future<void> fetchProducts() async {
-    final userIdService = UserIdService();
-    final String userId = await userIdService.getCurrentUserId() ?? '';    
+  Future<void> fetchProducts() async {   
     final token = await storage.read(key: 'token');
     if (token == null) return;
     try {
       final String fetchCartProductsUrl = dotenv.env['FETCH_CART_PRODUCTS'] ?? 'https://defaulturl.com/api';
 
       final response = await http.get(
-        Uri.parse('$fetchCartProductsUrl$userId'),
+        Uri.parse(fetchCartProductsUrl),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
           },
         );
       if (response.statusCode == 200) {

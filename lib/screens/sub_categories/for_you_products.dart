@@ -8,7 +8,7 @@ import '../../common/widgets/custom_shapes/containers/semi_curved_container.dart
 import '../../common/widgets/layouts/grid_layout.dart';
 import '../../common/widgets/texts/section_heading.dart';
 import '../../controllers/cart/add_to_cart_controller.dart';
-import '../../controllers/sub_categories/for_you_controller..dart';
+import '../../controllers/sub_categories/sub_category_controller.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/sizes.dart';
 import '../../utils/helpers/helper_function.dart';
@@ -41,6 +41,7 @@ class _ForYouProductsPageState extends ConsumerState<ForYouProductsPage> {
   void initState() {
     super.initState();
     getCurrentUserId();
+    Future.microtask(() => ref.read(fetchProductProvider.notifier).fetchProducts('you'));
   }
 
 
@@ -56,7 +57,7 @@ class _ForYouProductsPageState extends ConsumerState<ForYouProductsPage> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     final dark = THelperFunctions.isDarkMode(context);
-    final forYouProducts = ref.watch(foryouProvider);
+    final forYouProducts = ref.watch(fetchProductProvider);
     final cartController = ref.read(addToCartProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,

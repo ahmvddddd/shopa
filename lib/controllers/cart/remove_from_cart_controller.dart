@@ -1,9 +1,7 @@
-import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 import 'cart_products_controller.dart';
 
 final removeFromCartProvider = Provider((ref) => RemoveFromCartController(ref));
@@ -21,12 +19,11 @@ class RemoveFromCartController {
     final String removeFromCartUrl = dotenv.env['REMOVE_FROM_CART'] ?? 'https://defaulturl.com/api';
 
     try {
-      final response = await http.post(
-        Uri.parse(removeFromCartUrl),
-        body: json.encode({"productId": productId}),
+      final response = await http.delete(
+        Uri.parse('$removeFromCartUrl$productId'),
         headers: {
+        'Content-Type': 'application/json',
         'Authorization': 'Bearer $token', 
-        'Content-Type': 'application/json'
         },
       );
 

@@ -57,10 +57,7 @@ class CartPageState extends ConsumerState<CartScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              final cartProducts = ref.watch(cartProductsProvider.notifier);
-              clearController.clearCart(
-              );
-              cartProducts.fetchProducts();
+              clearController.clearCart();
             },
             icon: Icon(Icons.delete, color: Colors.red[900], size: Sizes.iconMd),
           ),
@@ -120,9 +117,7 @@ class CartPageState extends ConsumerState<CartScreen> {
                         trailing: IconButton(
                           icon: Icon(Icons.cancel, color: Colors.red[900]),
                           onPressed: () {
-                            final cartProducts = ref.watch(cartProductsProvider.notifier);
                             removeController.removeFromCart(productId);
-                            cartProducts.fetchProducts();
                           },
                         ),
                       ),

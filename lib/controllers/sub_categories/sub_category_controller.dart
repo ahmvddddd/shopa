@@ -13,14 +13,11 @@ class FetchProductController extends StateNotifier<SubCategoryModel> {
     SubCategoryModel(
       products: [],
       isLoading: true
-    )) {
-    fetchProducts();
-  }
+    ));
 
-  Future<void> fetchProducts() async {
+  Future<void> fetchProducts(String tag) async {
     try {
       final String productsTagUrl = dotenv.env['PRODUCTS_TAG_URL'] ?? 'https://defaulturl.com/api';
-      String tag = 'deal';
 
       final response = await http.get(Uri.parse('$productsTagUrl$tag'));
       if (response.statusCode == 200) {

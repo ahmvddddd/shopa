@@ -38,6 +38,7 @@ class _DealsProductsState extends ConsumerState<DealsProducts> {
   void initState() {
     super.initState();
     getCurrentUserId();
+    Future.microtask(() => ref.read(fetchProductProvider.notifier).fetchProducts('deal'));
   }
 
 

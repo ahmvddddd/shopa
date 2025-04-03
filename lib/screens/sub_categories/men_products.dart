@@ -30,6 +30,7 @@ class _MenProductsPageState extends ConsumerState<MenProductsPage> {
   void initState() {
     super.initState();
     getCurrentUserId();
+    Future.microtask(() => ref.read(fetchProductProvider.notifier).fetchProducts('deal'));
   }
 
   Future<void> getCurrentUserId() async {

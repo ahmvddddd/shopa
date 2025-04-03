@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'cart_products_controller.dart';
-import '../auth/userId_controller.dart';
 
 final clearCartProvider = Provider((ref) => ClearCartController(ref));
 
@@ -12,22 +11,26 @@ class ClearCartController {
 
   ClearCartController(this.ref);
 
+  final FlutterSecureStorage storage = FlutterSecureStorage();
+
   Future<void> clearCart() async {
-    final userIdService = UserIdService();
-    final String userId = await userIdService.getCurrentUserId() ?? '';
     final String clearCartUrl = dotenv.env['CLEAR_CART'] ?? 'https://defaulturl.com/api';
+    final token = await storage.read(key: 'token');
 
     try {
-      final response = await http.post(
+      final response = await http.delete(
         Uri.parse(clearCartUrl),
-        body: json.encode({"userId": userId}),
-        headers: {"Content-Type": "application/json"},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer: $token'
+          },
       );
 
       if (response.statusCode == 200) {
         ref.read(cartProductsProvider.notifier).fetchProducts();
       } else {
-        throw Exception('Failed to clear cart');
+        // throw Exception('Failed to clear cart');
+        print(response.body);
       }
     } catch (e) {
       throw Exception('Failed to clear cart');
