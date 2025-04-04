@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../../common/widgets/appbar/appbar.dart';
 import '../../../common/widgets/custom_shapes/containers/button_container.dart';
 import '../../../common/widgets/custom_shapes/containers/rounded_container.dart';
@@ -27,14 +26,12 @@ class CheckoutPageState extends ConsumerState<CheckoutPage> {
   String currentUserId = '';
   TextEditingController addressController = TextEditingController();
   final UserIdService userIdService = UserIdService();
-  final String fetchOrderTotalUrl = dotenv.env['FETCH_ORDER_TOTAL'] ?? 'https://defaulturl.com/api';
-  final String placeOrderUrl = dotenv.env['PLACE_ORDER'] ?? 'https://defaulturl.com/api';
 
   @override
   void initState() {
     super.initState();
   Future.microtask(() {
-    ref.watch(checkoutProvider.notifier).fetchOrderTotal();
+    ref.watch(checkoutProvider.notifier).fetchOrderTotal(context);
   });
   }
 
@@ -68,7 +65,7 @@ class CheckoutPageState extends ConsumerState<CheckoutPage> {
           plaOrderController.placeOrder(
             context,
           checkoutController.cartItems,
-          checkoutController.totalAmount
+          checkoutController.totalAmount,
           );
         },
         text: 'Proceed',

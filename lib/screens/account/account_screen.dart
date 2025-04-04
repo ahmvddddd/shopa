@@ -7,7 +7,7 @@ import '../../common/widgets/appbar/appbar.dart';
 import '../../common/widgets/list_tile/settings_menu_tile.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/sizes.dart';
-import '../product/products_page.dart';
+import '../product/category_gridview_admin.dart.dart';
 import '../sub_categories/user_orders.dart';
 import 'upload_product_screen.dart';
 import 'widgets/account_menu.dart';
@@ -105,7 +105,7 @@ class _AccountScreenState extends State<AccountScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ProductsPage(),
+                                builder: (context) => CategoryGridViewAdmin(),
                               ),
                             );
                           },

@@ -4,35 +4,39 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../common/widgets/pop_up/custom_snackbar.dart';
-import '../../screens/payment/payment_screen.dart';
+import '../../nav_menu.dart';
 import '../../utils/constants/colors.dart';
 import '../auth/userId_controller.dart';
+import 'clear_cart_controller.dart';
 
-final placeOrderProvider = Provider((ref) => AddToCartController());
+final processOrderProvider = Provider((ref) => ProcessOrderController(ref));
 
-class AddToCartController {
-  Future<void> placeOrder( BuildContext context, List<dynamic> products, double totalAmount) async {
+class ProcessOrderController {
+  final Ref ref;
+
+  ProcessOrderController(this.ref);
+
+  Future<void> processOrder( BuildContext context, List<dynamic> products) async {
     try {
-      final String placeOrderUrl = dotenv.env['PLACE_ORDER'] ?? 'https://defaulturl.com/api';
+      final String processOrderUrl = dotenv.env['PROCESS_ORDERS'] ?? 'https://defaulturl.com/api';
     final userIdService = UserIdService();
     final String userId = await userIdService.getCurrentUserId() ?? '';
       
       final response = await http.post(
-        Uri.parse(placeOrderUrl),
+        Uri.parse(processOrderUrl),
         body: json.encode({
           "userId": userId,
           "products": products,
-          "totalAmount": totalAmount,
-          "deliveryStatus": "pending",
         }),
         headers: {"Content-Type": "application/json"},
       );
 
       if (response.statusCode == 200) {
+        ref.read(clearCartProvider).clearCart(context);
         CustomSnackbar.show(
         context: context,
-        title: 'Success',
-        message: 'Your order has been placed. Proceed to payment page',
+        title: '',
+        message: 'Your order is been shipped out',
         backgroundColor: TColors.success,
         icon: Icons.check
        );
@@ -40,32 +44,10 @@ class AddToCartController {
           context,
           MaterialPageRoute(
             builder:
-                (context) => PaymentScreen(
-                  products: products,
-                  totalAmount: totalAmount,
-                ),
+                (context) => NavigationMenu()
           ),
         );
-      } else if (response.statusCode == 201) {
-        CustomSnackbar.show(
-        context: context,
-        title: 'Success',
-        message: 'Your order has been placed. Proceed to payment page',
-        backgroundColor: TColors.success,
-        icon: Icons.check
-       );
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => PaymentScreen(
-                  products: products,
-                  totalAmount: totalAmount,
-                ),
-          ),
-        );
-      }
-      else {
+      } else {
        CustomSnackbar.show(
         context: context,
         title: 'An error occured',

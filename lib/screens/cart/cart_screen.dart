@@ -29,7 +29,7 @@ class CartPageState extends ConsumerState<CartScreen> {
   void initState() {
     super.initState();
   Future.microtask(() {
-    ref.read(cartProductsProvider.notifier).fetchProducts();
+    ref.read(cartProductsProvider.notifier).fetchProducts(context);
   });
   }
 
@@ -57,7 +57,7 @@ class CartPageState extends ConsumerState<CartScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              clearController.clearCart();
+              clearController.clearCart(context);
             },
             icon: Icon(Icons.delete, color: Colors.red[900], size: Sizes.iconMd),
           ),
@@ -117,7 +117,7 @@ class CartPageState extends ConsumerState<CartScreen> {
                         trailing: IconButton(
                           icon: Icon(Icons.cancel, color: Colors.red[900]),
                           onPressed: () {
-                            removeController.removeFromCart(productId);
+                            removeController.removeFromCart(context, productId);
                           },
                         ),
                       ),

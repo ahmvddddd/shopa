@@ -25,6 +25,7 @@ class CategoryGridviewState extends ConsumerState<CategoryGridview> {
   @override
   void initState() {
     super.initState();
+    Future.microtask(() => ref.read(categoryProductsProvider.notifier).fetchCategories());
   }
 
   @override

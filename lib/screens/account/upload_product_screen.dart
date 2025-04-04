@@ -7,14 +7,18 @@ import '../../controllers/products/upload_product_controller.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/sizes.dart';
 
-class UploadProductScreen extends ConsumerWidget {
+class UploadProductScreen extends ConsumerStatefulWidget {
   const UploadProductScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<UploadProductScreen> createState() => _UploadProductScreenState();
+}
+
+class _UploadProductScreenState extends ConsumerState<UploadProductScreen> {
+  @override
+  Widget build(BuildContext context) {
     final productState = ref.watch(uploadProductProvider);
     final controller = ref.read(uploadProductProvider.notifier);
-
     return Scaffold(
       appBar: TAppBar(
         title: Text(
@@ -24,7 +28,9 @@ class UploadProductScreen extends ConsumerWidget {
         showBackArrow: true,
       ),
       bottomNavigationBar: ButtonContainer(
-        onPressed: controller.uploadProduct,
+        onPressed: () {
+          controller.uploadProduct(context);
+        },
         text: 'Upload Product',
       ),
       body: Padding(

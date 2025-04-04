@@ -7,16 +7,19 @@ import '../../controllers/products/update_product_controller.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/sizes.dart';
 
-class UpdateProductPage extends ConsumerWidget {
+class UpdateProductScreen extends ConsumerStatefulWidget {
   final String productId;
-
-  const UpdateProductPage({super.key, required this.productId});
+  const UpdateProductScreen({super.key, required this.productId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final productState = ref.watch(updateProductProvider(productId));
-    final controller = ref.read(updateProductProvider(productId).notifier);
+  ConsumerState<UpdateProductScreen> createState() => _UpdateProductScreenState();
+}
 
+class _UpdateProductScreenState extends ConsumerState<UpdateProductScreen> {
+  @override
+  Widget build(BuildContext context) {
+    final productState = ref.watch(updateProductProvider(widget.productId));
+    final controller = ref.read(updateProductProvider(widget.productId).notifier);
     return Scaffold(
       appBar: TAppBar(
         title: Text(
@@ -26,7 +29,7 @@ class UpdateProductPage extends ConsumerWidget {
         showBackArrow: true,
       ),
       bottomNavigationBar: ButtonContainer(
-        onPressed: () => controller.updateProduct(),
+        onPressed: () => controller.updateProduct(context),
         text: 'Update Product',
       ),
       body: SingleChildScrollView(

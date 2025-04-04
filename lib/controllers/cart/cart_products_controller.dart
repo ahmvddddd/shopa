@@ -1,9 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../../common/widgets/pop_up/custom_snackbar.dart';
 import '../../models/cart/cart_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+import '../../utils/constants/colors.dart';
 
 
 final cartProductsProvider = StateNotifierProvider<FetchProductController, CartModel>((ref) {
@@ -15,13 +19,11 @@ class FetchProductController extends StateNotifier<CartModel> {
     CartModel(
       cartItems: [],
       isLoading: true
-    )) {
-    fetchProducts();
-  }
+    ));
 
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
-  Future<void> fetchProducts() async {   
+  Future<void> fetchProducts(BuildContext context) async {   
     final token = await storage.read(key: 'token');
     if (token == null) return;
     try {
@@ -42,10 +44,22 @@ class FetchProductController extends StateNotifier<CartModel> {
           isLoading: false
         );
       } else {
-        print(response.body);
+       CustomSnackbar.show(
+        context: context,
+        title: 'An error occured',
+        message: 'Could not load cart items. Try again later',
+        backgroundColor: TColors.error,
+        icon: Icons.cancel
+       );
       }
     } catch (e) {
-      print(e.toString());
+       CustomSnackbar.show(
+        context: context,
+        title: 'An error occured',
+        message: 'Could not load cart items. Try again later',
+        backgroundColor: TColors.error,
+        icon: Icons.cancel
+       );
     }
   }
 }

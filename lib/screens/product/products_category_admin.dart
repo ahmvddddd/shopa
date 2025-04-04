@@ -144,9 +144,6 @@ class _ProductsCategoryAdminState extends ConsumerState<ProductsCategoryAdmin> {
 
                             IconButton(
                               onPressed: () {
-                                print(
-                                  'uid$currentUserId, pid$productId, pName$productName, pPrice$productPrice',
-                                );
                                 addToCart(productId, productName, productPrice);
                               },
                               icon: Icon(

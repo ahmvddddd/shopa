@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -8,11 +9,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../common/widgets/appbar/appbar.dart';
 import '../../common/widgets/custom_shapes/containers/button_container.dart';
+import '../../controllers/cart/process_order_controller.dart';
 import '../../utils/constants/sizes.dart';
 import '../../utils/helpers/helper_function.dart';
 import '../../controllers/auth/userId_controller.dart';
 
-class PaymentScreen extends StatefulWidget {
+class PaymentScreen extends ConsumerStatefulWidget {
   final List<dynamic> products;
   final double totalAmount;
   const PaymentScreen({
@@ -25,7 +27,7 @@ class PaymentScreen extends StatefulWidget {
   _PaymentScreenState createState() => _PaymentScreenState();
 }
 
-class _PaymentScreenState extends State<PaymentScreen> {
+class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   // double _balance = 0.0;
   final _cardNumberController = TextEditingController();
   final _cvvController = TextEditingController();
@@ -43,39 +45,39 @@ class _PaymentScreenState extends State<PaymentScreen> {
     super.initState();
   }
 
-  Future<void> placeOrder() async {
-    try {
-      await getCurrentUserId();
-      final response = await http.post(
-        Uri.parse(placeOrderUrl),
-        body: json.encode({
-          "userId": currentUserId,
-          "products": widget.products,
-          "totalAmount": widget.totalAmount,
-          "deliveryStatus": "success",
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      );
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Your order would arrive soon. Thank you',
-            ),
-          ),
-        );
-        clearCart();
-      } else {
-        print(response.body);
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unable to place order, try again')),
-      );
-    }
-  }
+  // Future<void> placeOrder() async {
+  //   try {
+  //     await getCurrentUserId();
+  //     final response = await http.post(
+  //       Uri.parse(placeOrderUrl),
+  //       body: json.encode({
+  //         "userId": currentUserId,
+  //         "products": widget.products,
+  //         "totalAmount": widget.totalAmount,
+  //         "deliveryStatus": "success",
+  //       }),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     );
+  //     if (response.statusCode == 200) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text(
+  //             'Your order would arrive soon. Thank you',
+  //           ),
+  //         ),
+  //       );
+  //       clearCart();
+  //     } else {
+  //       print(response.body);
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Unable to place order, try again')),
+  //     );
+  //   }
+  // }
 
   Future<void> clearCart() async {
     try {
@@ -117,6 +119,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
+    final processOrderController = ref.read(processOrderProvider);
     // String accountBalance = NumberFormat('#,##0.00').format(_balance);
     return Scaffold(
       appBar: TAppBar(
@@ -124,7 +127,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
         showBackArrow: true,
       ),
       bottomNavigationBar: ButtonContainer(onPressed: () {
-        placeOrder();
+        processOrderController.processOrder(
+          context,
+          widget.products,
+        );
       }, 
       text: 'Pay'),
       body: SingleChildScrollView(

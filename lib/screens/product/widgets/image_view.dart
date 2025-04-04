@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../common/widgets/appbar/appbar.dart';
 import 'package:intl/intl.dart';
 import '../../../common/widgets/custom_shapes/containers/button_container.dart';
+import '../../../common/widgets/pop_up/custom_alert_dialog.dart';
 import '../../../controllers/products/delete_product_controller.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/sizes.dart';
@@ -38,6 +39,7 @@ class ImageViewState extends ConsumerState<ImageView> {
   }
 
 
+
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
@@ -57,13 +59,29 @@ class ImageViewState extends ConsumerState<ImageView> {
             MaterialPageRoute(
               builder:
                   (context) =>
-                      UpdateProductPage(productId: widget.product['_id']),
+                      UpdateProductScreen(productId: widget.product['_id']),
             ),
           );
         },
         onPressed2: () {
-          ref.read(deleteProductProvider).deleteProduct(context, widget.product['_id']);
-        },
+  showDialog(
+    context: context,
+    builder: (context) => CustomAlertDialog(
+      title: 'Delete Product',
+      message: 'Are you sure you want to delete this product?',
+      confirmText: 'Yes',
+      cancelText: 'No',
+      onConfirm: () {
+        ref.read(deleteProductProvider)
+            .deleteProduct(context, widget.product['_id']);
+      },
+      onCancel: () {
+        // Optional: You can add additional logic here if needed
+      },
+    ),
+  );
+},
+
         backgroundColor: TColors.warning,
         backgroundColor2: TColors.error,
         child2: Icon(Icons.delete, color: Colors.white, size: Sizes.iconSm),

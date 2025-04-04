@@ -4,6 +4,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import '../../common/widgets/pop_up/custom_snackbar.dart';
+import '../../utils/constants/colors.dart';
+
 final addToCartProvider = Provider((ref) => AddToCartController());
 
 class AddToCartController {
@@ -24,18 +27,30 @@ class AddToCartController {
       );
 
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Item added to cart')),
-        );
+        CustomSnackbar.show(
+        context: context,
+        title: 'Added to cart',
+        message: 'You have added one item to your cart',
+        backgroundColor: TColors.success,
+        icon: Icons.check
+       );
       } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not add item to cart. Try again')),
-      );
+       CustomSnackbar.show(
+        context: context,
+        title: 'An error occured',
+        message: 'Could not add item to cart. Try again later',
+        backgroundColor: TColors.error,
+        icon: Icons.cancel
+       );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not add item to cart. Try again')),
-      );
+       CustomSnackbar.show(
+        context: context,
+        title: 'An error occured',
+        message: 'Could not add item to cart. Try again later',
+        backgroundColor: TColors.error,
+        icon: Icons.cancel
+       );
     }
   }
 }

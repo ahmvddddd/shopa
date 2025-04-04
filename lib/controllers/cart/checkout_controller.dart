@@ -1,8 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../../common/widgets/pop_up/custom_snackbar.dart';
 import '../../models/cart/checkout_model.dart';
+import '../../utils/constants/colors.dart';
 import '../auth/userId_controller.dart';
 
 final checkoutProvider = StateNotifierProvider<FetchProductController, CheckoutModel>((ref) {
@@ -15,11 +18,9 @@ class FetchProductController extends StateNotifier<CheckoutModel> {
       totalAmount: 0,
       cartItems: [],
       isLoading: true
-    )) {
-    fetchOrderTotal();
-  }
+    ));
 
-  Future<void> fetchOrderTotal() async {
+  Future<void> fetchOrderTotal(BuildContext context) async {
     try {
       final String fetchOrderTotalUrl = dotenv.env['FETCH_ORDER_TOTAL'] ?? 'https://defaulturl.com/api';
     final userIdService = UserIdService();
@@ -35,10 +36,22 @@ class FetchProductController extends StateNotifier<CheckoutModel> {
           isLoading: false
         );
       } else {
-        print(response.body);
+       CustomSnackbar.show(
+        context: context,
+        title: 'An error occured',
+        message: 'Could not load cart items. Try again later',
+        backgroundColor: TColors.error,
+        icon: Icons.cancel
+       );
       }
     } catch (e) {
-      print(e.toString());
+       CustomSnackbar.show(
+        context: context,
+        title: 'An error occured',
+        message: 'Could not load cart items. Try again later',
+        backgroundColor: TColors.error,
+        icon: Icons.cancel
+       );
     }
   }
 }

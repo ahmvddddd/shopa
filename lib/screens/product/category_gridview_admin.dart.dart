@@ -11,20 +11,31 @@ import '../../utils/helpers/helper_function.dart';
 import 'products_category_admin.dart';
 import 'widgets/image_view.dart';
 
-final searchQueryProvider = StateProvider<String>((ref) => '');
-
-class ProductsPage extends ConsumerWidget {
-  const ProductsPage({super.key});
+class CategoryGridViewAdmin extends ConsumerStatefulWidget {
+  const CategoryGridViewAdmin({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CategoryGridViewAdmin> createState() => _CategoryGridViewAdminState();
+}
+
+class _CategoryGridViewAdminState extends ConsumerState<CategoryGridViewAdmin> {
+
+  final searchQueryProvider = StateProvider<String>((ref) => '');
+  
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => ref.read(categoryProductsProvider.notifier).fetchCategories());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(categoryProductsProvider);
     final controller = ref.read(categoryProductsProvider.notifier);
     final searchQuery = ref.watch(searchQueryProvider);
     final dark = THelperFunctions.isDarkMode(context);
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       appBar: TAppBar(
         title: Text(
@@ -143,5 +154,6 @@ class ProductsPage extends ConsumerWidget {
         ),
       ),
     );
+
   }
 }

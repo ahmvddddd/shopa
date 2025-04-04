@@ -1,11 +1,15 @@
 // ignore_for_file: avoid_print
 
 import 'dart:typed_data';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../common/widgets/pop_up/custom_snackbar.dart';
 import '../../models/products/update_product_model.dart';
+import '../../nav_menu.dart';
+import '../../utils/constants/colors.dart';
 
 class UpdateProductController extends StateNotifier<UpdateProductModel> {
   final ImagePicker _picker = ImagePicker();
@@ -46,7 +50,7 @@ class UpdateProductController extends StateNotifier<UpdateProductModel> {
     }
   }
 
-  Future<void> updateProduct() async {
+  Future<void> updateProduct(BuildContext context) async {
     try {
       var uri = Uri.parse('$updateProductUrl${state.id}');
       var request = http.MultipartRequest('PUT', uri);
@@ -61,12 +65,35 @@ class UpdateProductController extends StateNotifier<UpdateProductModel> {
 
       var response = await request.send();
       if (response.statusCode == 200) {
-        print('Product updated successfully!');
+        CustomSnackbar.show(
+        context: context,
+        title: 'Success',
+        message: 'Product updated succefully',
+        backgroundColor: TColors.success,
+        icon: Icons.check
+       );
+       Navigator.push(context, 
+       MaterialPageRoute(
+        builder: (context) => NavigationMenu()
+       ));
       } else {
+       CustomSnackbar.show(
+        context: context,
+        title: 'An error occured',
+        message: 'Could not update product: ${response.reasonPhrase}',
+        backgroundColor: TColors.error,
+        icon: Icons.cancel
+       );
         print('Error updating product: ${response.reasonPhrase}');
       }
     } catch (e) {
-      print('Error: $e');
+       CustomSnackbar.show(
+        context: context,
+        title: 'An error occured',
+        message: 'Could not update product. Try again later',
+        backgroundColor: TColors.error,
+        icon: Icons.cancel
+       );
     }
   }
 }
