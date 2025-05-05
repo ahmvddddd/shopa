@@ -40,7 +40,7 @@ flutter run
 4. Build APK (Android)
 To build a release APK:
 ```
-flutter build apl
+flutter build apk
 ```
 Build for iOS (MacOS only)
 To build the app for iOS:
